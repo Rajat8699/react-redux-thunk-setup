@@ -1,25 +1,41 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import {BrowserRouter, Switch, Route} from 'react-router-dom';
+import AdminRoute from './routes/AdminRoutes';
+import { connect } from "react-redux";
+import { login } from "./services/actions/auth";
+import { bindActionCreators } from "redux";
+import {Topbar} from "./components/Topbar/topbar";
+import Login from "./container/Login";
 
-function App() {
+const App = (props, { location }) => {
+  // if (props.unauthorized.unauthorized === true) {
+  //   props.history.push("/auth/login");
+  //   props.login();
+  // }
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+    <Topbar className="outerpage"/>
+    <Switch>
+    <Route location={location} path="/" component={Login} />
+    <AdminRoute location ={location} path=""/>
+    </Switch>
+    </BrowserRouter>
   );
-}
+};
 
-export default App;
+const mapDispatch = (dispatch) => {
+  return bindActionCreators(
+    {
+      login,
+    },
+    dispatch
+  );
+};
+
+const mapGetState = (state) => {
+  return {
+    unauthorized: state.auth,
+  };
+};
+export default connect(mapGetState, mapDispatch)(App);
+
